@@ -41,7 +41,7 @@ public class LevelManager : MonoBehaviour
     private void LoadLevelProgress()
     {
         // PlayerPrefs'ten kayıtlı verileri yükle
-        reachedLevel = PlayerPrefs.GetInt("ReachedLevel", 1);
+        reachedLevel = PlayerPrefs.GetInt("ReachedLevel", 8);
     }
 
     private void SaveLevelProgress()

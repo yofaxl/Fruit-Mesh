@@ -546,7 +546,6 @@ MonoBehaviour:
   totalLevels: 8
   reachedLevel: 1
   levelSelectPanel: {fileID: 2043660118}
-  levelCompletePanel: {fileID: 0}
   levelButtonContainer: {fileID: 240329352}
   levelButtonPrefab: {fileID: 9190459382041699406, guid: 0b6d49c7ca657cc478d6f3d8998cd1d6, type: 3}
   unlockedSprites:
