@@ -13,6 +13,7 @@ TagManager:
   - RestartButton
   - MainMenuButton
   - NextLevelButton
+  - PlayerFeet
   layers:
   - Default
   - TransparentFX

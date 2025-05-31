@@ -9,11 +9,25 @@ public class MonsterStomp : MonoBehaviour
     {
         if (other.CompareTag("EnemyHead"))
         {
-            
             GameObject enemy = other.transform.root.gameObject;
-            Destroy(enemy);
+            Debug.Log("Enemy root: " + enemy.name);
 
-           
+            Animator anim = enemy.GetComponent<Animator>();
+            if (anim == null)
+            {
+                anim = enemy.GetComponentInChildren<Animator>();
+            }
+
+            if (anim != null)
+            {
+                anim.SetTrigger("Die"); 
+                Debug.Log("Die trigger set edildi.");
+            }
+            else
+            {
+                Debug.LogWarning("Animator bulunamadı!");
+            }
+
             rb2D.linearVelocity = new Vector2(rb2D.linearVelocity.x, bounce);
         }
     }
