@@ -30,6 +30,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private ParticleSystem dustParticles;
 
+    public bool isOnPlatform;
+    public Rigidbody2D platformRb;
+
     private void Start()
     {
         rightParticlePos = dustParticles.transform.localPosition;
@@ -41,7 +44,9 @@ public class PlayerMovement : MonoBehaviour
         horizontal = Input.GetAxisRaw("Horizontal");
 
         animator.SetFloat("yVelocity", rb.linearVelocity.y);
-        animator.SetFloat("magnitude", Mathf.Abs(rb.linearVelocity.x));
+        bool isFalling = !IsGrounded() && rb.linearVelocity.y < -0.1f;
+        animator.SetBool("isFalling", isFalling);
+        animator.SetFloat("magnitude", Mathf.Abs(horizontal));
         animator.SetBool("isWallSliding", isWallSliding);
 
         if (IsGrounded() && !Input.GetButton("Jump"))
@@ -55,14 +60,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
                 animator.SetTrigger("jump");
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.PlayJumpSound();
-                }
-                else
-                {
-                    Debug.LogWarning("AudioManager instance is null when player jumps.");
-                }
+                AudioManager.Instance?.PlayJumpSound();
             }
             else if (isWallSliding)
             {
@@ -75,28 +73,14 @@ public class PlayerMovement : MonoBehaviour
                     Flip();
 
                 Invoke(nameof(StopWallJumping), wallJumpingDuration);
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.PlayJumpSound();
-                }
-                else
-                {
-                    Debug.LogWarning("AudioManager instance is null when player wall jumps.");
-                }
+                AudioManager.Instance?.PlayJumpSound();
             }
             else if (!doubleJump)
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
                 animator.SetTrigger("doubleJump");
                 doubleJump = true;
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.PlayJumpSound();
-                }
-                else
-                {
-                    Debug.LogWarning("AudioManager instance is null when player double jumps.");
-                }
+                AudioManager.Instance?.PlayJumpSound();
             }
         }
 
@@ -106,7 +90,6 @@ public class PlayerMovement : MonoBehaviour
         }
 
         WallSlide();
-
         UpdateParticleDirection();
 
         if (Mathf.Abs(horizontal) > 0.1f && IsGrounded() && !dustParticles.isPlaying)
@@ -124,8 +107,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        float platformVelocityX = isOnPlatform && platformRb != null ? platformRb.linearVelocity.x : 0f;
+
         if (!isWallJumping)
-            rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
+        {
+            rb.linearVelocity = new Vector2(horizontal * speed + platformVelocityX, rb.linearVelocity.y);
+        }
     }
 
     private void WallSlide()
